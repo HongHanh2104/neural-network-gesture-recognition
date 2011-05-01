@@ -8,4 +8,14 @@ public class Input {
 	{
 		this.value = value;
 	}
+	
+	public void setValue(float v)
+	{
+		value = v;
+	}
+	
+	public float getValue()
+	{
+		return value;
+	}
 }

@@ -10,9 +10,14 @@ public class Perceptron {
 	
 	Output output;
 
+
+	public Perceptron()
+	{
+		initOutput();
+	}
+	
 	public Perceptron(List<Input> inputs, List<Weight> weights)
 	{
-		assert(inputs != null && weights != null);
 		assert(inputs.size() == weights.size());
 		
 		setInputs(inputs);
@@ -24,10 +29,10 @@ public class Perceptron {
 	{
 		this.output = new Output();
 	}
-	
-	public void setWeights(List<Weight> weight)
+
+	public void setWeights(List<Weight> weights)
 	{
-		this.weights = weight;
+		this.weights = weights;
 	}
 	public void setInputs(List<Input> inputs)
 	{
@@ -37,6 +42,11 @@ public class Perceptron {
 	public Output getOutput()
 	{
 		return this.output;
+	}
+	
+	public List<Weight> getWeights()
+	{
+		return this.weights;
 	}
 	
 	public void computeOutput()
