@@ -54,22 +54,22 @@ public class Test {
 		// Train
 		float learningRate = 0.5f;
 		float momentum = 0.8f;
-		float maxError = 0;
+		float totalError = 0;
 		
 		int iterations = 0;
 		do {
-			maxError = Float.NEGATIVE_INFINITY;
+			totalError = 0;
 			
 			for(int i = 0; i < training_set_inputs.length; i++) {
 				perceptron.setInputs(training_set_inputs[i]);
 				perceptron.computeOutput();
 				perceptron.setExpectedOutput(training_set_outputs[i]);
-				maxError = Math.max(maxError, perceptron.deltaRule(learningRate, momentum));
+				totalError += perceptron.deltaRule(learningRate, momentum);
 			}
 			
-			System.out.println(maxError);
+			System.out.println(totalError);
 			iterations++;
-		} while(Math.abs(maxError) > 0.01);
+		} while(Math.abs(totalError) > 0.0001);
 		
 		System.out.println(iterations);
 		System.out.println();
@@ -78,13 +78,12 @@ public class Test {
 		for(int i = 0; i < training_set_inputs.length; i++) {
 			perceptron.setInputs(training_set_inputs[i]);
 			perceptron.computeOutput();
-			System.out.println(Arrays.toString(training_set_inputs[i]) + "\t" + perceptron.getValue().value + "\t" + (perceptron.getValue().value > 0.5 ? 1 : 0));
+			System.out.println(Arrays.toString(training_set_inputs[i]) + "\t" + perceptron.getValue() + "\t" + (perceptron.getValue() > 0.5 ? 1 : 0));
 		}
 	}
 	
-	public static void neuralNetworkTest() {
+	private static void neuralNetworkTest() {
 		
-		// Two inputs, two nodes in hidden layer, one output
 		NeuralNetwork nn = new NeuralNetwork(new int[]{2, 2, 1});
 		
 		SimpleValue[][] training_set_inputs = {
@@ -96,34 +95,31 @@ public class Test {
 		
 		SimpleValue[][] training_set_outputs = {
 				{new SimpleValue(0)},
-				{new SimpleValue(0)},
-				{new SimpleValue(0)},
-				{new SimpleValue(1)}
+				{new SimpleValue(1)},
+				{new SimpleValue(1)},
+				{new SimpleValue(0)}
 		};
 		
 		// Train
-		float learningRate = 0.01f;
-		float momentum = 0f;
-		float maxError = 0;
+		float learningRate = 0.05f;
+		float momentum = 0.8f;
+		float totalError = 0;
+		int iterations;
 		
-		int iterations = 0;
-		
-		do {
-			maxError = Float.NEGATIVE_INFINITY;
+		for(iterations = 0; iterations < 1000000; iterations++) {
+			totalError = 0;
 			
 			for(int i = 0; i < training_set_inputs.length; i++) {
 				nn.setInputs(training_set_inputs[i]);
 				nn.computeOutput();
 				nn.setExpectedOutput(training_set_outputs[i]);
-				maxError = Math.max(maxError, nn.backPropagation(learningRate, momentum));
+				totalError += nn.backPropagation(learningRate, momentum);
 			}
 			
-			System.out.println(maxError);
-			iterations++;
-		}while(Math.abs(maxError) > 0.1 || iterations < 100000);
+			System.out.println(totalError);
+		}
 		
-		System.out.println(iterations);
-		System.out.println();
+		System.out.println(iterations + " " + totalError);
 		
 		// Test
 		for(int i = 0; i < training_set_inputs.length; i++) {

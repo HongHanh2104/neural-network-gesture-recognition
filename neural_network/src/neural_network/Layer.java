@@ -2,8 +2,8 @@ package neural_network;
 
 public class Layer {
 
-	private IValue[] 		inputs;
-	private Neuron[] 			nodes;
+	private IValue[] inputs;
+	private Neuron[] nodes;
 	
 	public Layer(int numInputs, int numNodes) {
 		
@@ -58,11 +58,11 @@ public class Layer {
 	}
 	
 	public float deltaRule(float learningRate, float momentum) {
-		float maxError = Float.NEGATIVE_INFINITY;
+		float totalError = 0.0f;
 		
 		for(Neuron node : nodes)
-			maxError = Math.max(maxError, node.deltaRule(learningRate, momentum));
+			totalError += node.deltaRule(learningRate, momentum);
 		
-		return maxError;
+		return totalError;
 	}
 }

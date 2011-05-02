@@ -12,7 +12,7 @@ public class Neuron implements IValue{
 	
 	private float		delta;
 	
-	private SimpleValue output;
+	private float 		output;
 	
 	public Neuron(int numInputs) {
 		if(numInputs < 1)
@@ -31,17 +31,17 @@ public class Neuron implements IValue{
 		threshold = 0.0f;
 		deltaThreshold = 0.0f;
 		delta = 0.0f;
-		output = new SimpleValue(0);
+		output = 0.0f;
 	}
 
 	@Override
-	public SimpleValue getValue() {
+	public float getValue() {
 		return output;
 	}
 	
 	@Override
 	public String toString() {
-		return output.toString();
+		return Float.toString(output);
 	}
 	
 	public void setInputs(IValue[] inputs) {
@@ -56,19 +56,19 @@ public class Neuron implements IValue{
 	}
 	
 	public void computeOutput() {
-		output.value = activationFunction(Util.dotProduct(inputs, weights) - threshold);
+		output = activationFunction(Util.dotProduct(inputs, weights) - threshold);
 		delta = 0.0f;
 	}
 	
 	public void setExpectedOutput(SimpleValue expectedOutput) {
-		delta = expectedOutput.value - output.value;
+		delta = expectedOutput.value - output;
 	}
 	
 	public float deltaRule(float learningRate, float momentum) {
 		
 		float difference = delta;
 		
-		delta *= output.value * (1 - output.value);
+		delta *= output * (1 - output);
 		
 		// Update threshold
 		deltaThreshold *= momentum;
@@ -83,11 +83,11 @@ public class Neuron implements IValue{
 				((Neuron)inputs[i]).delta += weights[i] * delta;
 			
 			deltaWeights[i] *= momentum;
-			deltaWeights[i] += learningRate * inputs[i].getValue().value * delta;
+			deltaWeights[i] += learningRate * inputs[i].getValue() * delta;
 			
 			weights[i] += deltaWeights[i];
 		}
 		
-		return difference;
+		return difference * difference;
 	}
 }

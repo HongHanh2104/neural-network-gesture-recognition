@@ -2,5 +2,5 @@ package neural_network;
 
 public interface IValue {
 
-	public SimpleValue getValue();
+	public float getValue();
 }

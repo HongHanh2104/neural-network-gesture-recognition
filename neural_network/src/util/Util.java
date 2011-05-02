@@ -16,7 +16,7 @@ public class Util {
 		float output = 0.0f;
 	
 		for(int i = 0; i < inputs.length; i++)
-			output += inputs[i].getValue().value * weights[i];
+			output += inputs[i].getValue() * weights[i];
 		
 		return output;
 	}

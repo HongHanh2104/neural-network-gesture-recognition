@@ -31,8 +31,8 @@ public class NeuralNetwork {
 	}
 	
 	public void computeOutput() {
-		for(Layer layer : layers)
-			layer.computeOutput();
+		for(int i = 0; i < layers.length; i++)
+			layers[i].computeOutput();
 	}
 	
 	public IValue[] getOutput() {
@@ -44,12 +44,11 @@ public class NeuralNetwork {
 	}
 	
 	public float backPropagation(float learningRate, float momentum) {
-
-		float maxError = Float.NEGATIVE_INFINITY;
+		float error = layers[layers.length - 1].deltaRule(learningRate, momentum);
+			
+		for(int i = layers.length - 2; i >= 0; i--)
+				layers[i].deltaRule(learningRate, momentum);
 		
-		for(int i = layers.length - 1; i >= 0; i--)
-			maxError = Math.max(maxError, layers[i].deltaRule(learningRate, momentum));
-		
-		return maxError;
+		return error;
 	}
 }

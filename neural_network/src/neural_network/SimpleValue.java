@@ -9,8 +9,8 @@ public class SimpleValue implements IValue{
 	}
 
 	@Override
-	public SimpleValue getValue() {
-		return this;
+	public float getValue() {
+		return value;
 	}
 	
 	@Override
