@@ -1,67 +1,75 @@
 package main;
 
-import neural_network.Layer;
-import neural_network.Perceptron;
-import neural_network.Value;
+import java.util.Arrays;
+
+import neural_network.NeuralNetwork;
+import neural_network.Neuron;
+import neural_network.SimpleValue;
 
 public class Test {
 	
-	public static enum TestToRun {PERCEPTRON, LAYER};
-	public static final TestToRun test = TestToRun.PERCEPTRON;
+	public static enum TestToRun {NEURON, NEURALNETWORK};
+	public static final TestToRun test = TestToRun.NEURALNETWORK;
 
 	public static void main(String[] args) {
 		
 		switch(test) {
-			case PERCEPTRON:
-				perceptronTest();
+			case NEURON:
+				nodeTest();
 				break;
-			case LAYER:
-				layerTest();
+			case NEURALNETWORK:
+				neuralNetworkTest();
 				break;
 		}
 		
 		System.out.println("Fin.");
 	}
 	
-	private static void perceptronTest() {
-		Perceptron perceptron = new Perceptron(3);
+	private static void nodeTest() {
+		Neuron perceptron = new Neuron(3);
 		
 		// Training set
-		Value[][] training_set_inputs = {
-			{new Value(0), new Value(0), new Value(0)},
-			{new Value(1), new Value(0), new Value(0)},
-			{new Value(0), new Value(1), new Value(0)},
-			{new Value(1), new Value(1), new Value(0)},
-			{new Value(0), new Value(0), new Value(1)},
-			{new Value(1), new Value(0), new Value(1)},
-			{new Value(0), new Value(1), new Value(1)},
-			{new Value(1), new Value(1), new Value(1)}
+		SimpleValue[][] training_set_inputs = {
+			{new SimpleValue(0), new SimpleValue(0), new SimpleValue(0)},
+			{new SimpleValue(1), new SimpleValue(0), new SimpleValue(0)},
+			{new SimpleValue(0), new SimpleValue(1), new SimpleValue(0)},
+			{new SimpleValue(1), new SimpleValue(1), new SimpleValue(0)},
+			{new SimpleValue(0), new SimpleValue(0), new SimpleValue(1)},
+			{new SimpleValue(1), new SimpleValue(0), new SimpleValue(1)},
+			{new SimpleValue(0), new SimpleValue(1), new SimpleValue(1)},
+			{new SimpleValue(1), new SimpleValue(1), new SimpleValue(1)}
 		};
 		
-		Value[] training_set_outputs = {
-				new Value(0),
-				new Value(0),
-				new Value(0),
-				new Value(0),
-				new Value(0),
-				new Value(0),
-				new Value(0),
-				new Value(1)
+		SimpleValue[] training_set_outputs = {
+				new SimpleValue(0),
+				new SimpleValue(0),
+				new SimpleValue(0),
+				new SimpleValue(0),
+				new SimpleValue(0),
+				new SimpleValue(0),
+				new SimpleValue(0),
+				new SimpleValue(1)
 		};
 		
 		// Train
-		float learningRate = 0.01f;
-		float totalError = 0;
+		float learningRate = 0.5f;
+		float momentum = 0.8f;
+		float maxError = 0;
 		
 		int iterations = 0;
 		do {
-			totalError = 0;
+			maxError = Float.NEGATIVE_INFINITY;
 			
-			for(int i = 0; i < training_set_inputs.length; i++)
-				totalError += perceptron.deltaRule(training_set_inputs[i], training_set_outputs[i], learningRate);
+			for(int i = 0; i < training_set_inputs.length; i++) {
+				perceptron.setInputs(training_set_inputs[i]);
+				perceptron.computeOutput();
+				perceptron.setExpectedOutput(training_set_outputs[i]);
+				maxError = Math.max(maxError, perceptron.deltaRule(learningRate, momentum));
+			}
 			
+			System.out.println(maxError);
 			iterations++;
-		} while(Math.abs(totalError) > 0.1);
+		} while(Math.abs(maxError) > 0.01);
 		
 		System.out.println(iterations);
 		System.out.println();
@@ -70,18 +78,58 @@ public class Test {
 		for(int i = 0; i < training_set_inputs.length; i++) {
 			perceptron.setInputs(training_set_inputs[i]);
 			perceptron.computeOutput();
-			System.out.println(perceptron.getOutput().value > 0.5 ? 1 : 0);
+			System.out.println(Arrays.toString(training_set_inputs[i]) + "\t" + perceptron.getValue().value + "\t" + (perceptron.getValue().value > 0.5 ? 1 : 0));
 		}
 	}
 	
-	private static void layerTest() {
-		Layer layer1 = new Layer(4, 10);
-		Layer layer2 = new Layer(10, 7);
+	public static void neuralNetworkTest() {
 		
-		layer1.connectTo(layer2);
+		// Two inputs, two nodes in hidden layer, one output
+		NeuralNetwork nn = new NeuralNetwork(new int[]{2, 2, 1});
 		
-		layer1.computeOutput();
-		layer2.computeOutput();
+		SimpleValue[][] training_set_inputs = {
+			{new SimpleValue(0), new SimpleValue(0)},
+			{new SimpleValue(1), new SimpleValue(0)},
+			{new SimpleValue(0), new SimpleValue(1)},
+			{new SimpleValue(1), new SimpleValue(1)},
+		};
+		
+		SimpleValue[][] training_set_outputs = {
+				{new SimpleValue(0)},
+				{new SimpleValue(0)},
+				{new SimpleValue(0)},
+				{new SimpleValue(1)}
+		};
+		
+		// Train
+		float learningRate = 0.01f;
+		float momentum = 0f;
+		float maxError = 0;
+		
+		int iterations = 0;
+		
+		do {
+			maxError = Float.NEGATIVE_INFINITY;
+			
+			for(int i = 0; i < training_set_inputs.length; i++) {
+				nn.setInputs(training_set_inputs[i]);
+				nn.computeOutput();
+				nn.setExpectedOutput(training_set_outputs[i]);
+				maxError = Math.max(maxError, nn.backPropagation(learningRate, momentum));
+			}
+			
+			System.out.println(maxError);
+			iterations++;
+		}while(Math.abs(maxError) > 0.1 || iterations < 100000);
+		
+		System.out.println(iterations);
+		System.out.println();
+		
+		// Test
+		for(int i = 0; i < training_set_inputs.length; i++) {
+			nn.setInputs(training_set_inputs[i]);
+			nn.computeOutput();
+			System.out.println(Arrays.toString(training_set_inputs[i]) + "\t" + Arrays.toString(nn.getOutput()));
+		}
 	}
-	
 }
