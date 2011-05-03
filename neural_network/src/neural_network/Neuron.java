@@ -4,11 +4,11 @@ import util.Util;
 
 public class Neuron implements IValue{
 	
+	private static final SimpleValue BIAS = new SimpleValue(-1);
+	
 	private IValue[] 	inputs;
 	private float[]		weights;
 	private float[]		deltaWeights;
-	private float		threshold;
-	private float 		deltaThreshold;
 	
 	private float		delta;
 	
@@ -18,18 +18,19 @@ public class Neuron implements IValue{
 		if(numInputs < 1)
 			throw new IllegalArgumentException("Perceptrons must have at least one input!");
 		
-		inputs = new SimpleValue[numInputs];
-		weights = new float[numInputs];
-		deltaWeights = new float[numInputs];
+		// Include the bias input!
+		inputs = new IValue[numInputs + 1];
+		weights = new float[numInputs + 1];
+		deltaWeights = new float[numInputs + 1];
 		
-		for(int i = 0; i < numInputs; i++) {
+		for(int i = 0; i < numInputs + 1; i++) {
 			inputs[i] = new SimpleValue(0);
-			weights[i] = 0.0f;
+			weights[i] = (float)(2 * Math.random() - 1);
 			deltaWeights[i] = 0.0f;
 		}
 		
-		threshold = 0.0f;
-		deltaThreshold = 0.0f;
+		inputs[0] = BIAS;
+		
 		delta = 0.0f;
 		output = 0.0f;
 	}
@@ -45,10 +46,11 @@ public class Neuron implements IValue{
 	}
 	
 	public void setInputs(IValue[] inputs) {
-		if(inputs.length != this.inputs.length)
+		if(inputs.length + 1 != this.inputs.length)
 			throw new IllegalArgumentException("Input arrays lengths must be the same!");
 		
-		this.inputs = inputs;
+		// Keep the bias input!!
+		System.arraycopy(inputs, 0, this.inputs, 1, inputs.length);
 	}
 	
 	private float activationFunction(float value) {
@@ -56,25 +58,19 @@ public class Neuron implements IValue{
 	}
 	
 	public void computeOutput() {
-		output = activationFunction(Util.dotProduct(inputs, weights) - threshold);
+		output = activationFunction(Util.weightedSum(inputs, weights));
 		delta = 0.0f;
 	}
 	
 	public void setExpectedOutput(SimpleValue expectedOutput) {
 		delta = expectedOutput.value - output;
 	}
-	
+		
 	public float deltaRule(float learningRate, float momentum) {
 		
 		float difference = delta;
 		
 		delta *= output * (1 - output);
-		
-		// Update threshold
-		deltaThreshold *= momentum;
-		deltaThreshold -= learningRate * delta;
-		
-		threshold += deltaThreshold;
 		
 		// Update weights
 		for(int i = 0; i < weights.length; i++) {

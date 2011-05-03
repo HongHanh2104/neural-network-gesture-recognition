@@ -8,15 +8,15 @@ public class Util {
 		return (float)(1 / (1 + Math.exp(-x)));
 	}
 	
-	public static float dotProduct(IValue[] inputs, float[] weights) {
+	public static float weightedSum(IValue[] array, float[] weights) {
 	
-		if(inputs.length != weights.length)
-			throw new IllegalArgumentException("Input arrays do not have the same length!");
+		if(array.length != weights.length)
+			throw new IllegalArgumentException("Input arrays do not have the same lengths!");
 		
 		float output = 0.0f;
 	
-		for(int i = 0; i < inputs.length; i++)
-			output += inputs[i].getValue() * weights[i];
+		for(int i = 0; i < array.length; i++)
+			output += array[i].getValue() * weights[i];
 		
 		return output;
 	}

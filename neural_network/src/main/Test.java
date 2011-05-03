@@ -101,12 +101,12 @@ public class Test {
 		};
 		
 		// Train
-		float learningRate = 0.05f;
-		float momentum = 0.8f;
+		float learningRate = 0.5f;
+		float momentum = 0.9f;
 		float totalError = 0;
-		int iterations;
 		
-		for(iterations = 0; iterations < 1000000; iterations++) {
+		int iterations = 0;
+		do {
 			totalError = 0;
 			
 			for(int i = 0; i < training_set_inputs.length; i++) {
@@ -117,7 +117,8 @@ public class Test {
 			}
 			
 			System.out.println(totalError);
-		}
+			iterations++;
+		} while(Math.abs(totalError) > 0.0001);
 		
 		System.out.println(iterations + " " + totalError);
 		
