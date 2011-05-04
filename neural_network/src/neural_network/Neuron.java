@@ -2,50 +2,53 @@ package neural_network;
 
 import util.Util;
 
-public class Neuron implements IValue{
-	
+public class Neuron implements IValue
+{
 	private static final SimpleValue BIAS = new SimpleValue(-1);
 	
 	private IValue[] 	inputs;
-	private float[]		weights;
-	private float[]		deltaWeights;
+	private double[]	weights;
+	private double[]	deltaWeights;
 	
-	private float		delta;
+	private double		delta;
 	
-	private float 		output;
+	private double 		output;
 	
-	public Neuron(int numInputs) {
+	public Neuron(int numInputs)
+	{
 		if(numInputs < 1)
-			throw new IllegalArgumentException("Perceptrons must have at least one input!");
+			throw new IllegalArgumentException("Neurons must have at least one input!");
 		
 		// Include the bias input!
 		inputs = new IValue[numInputs + 1];
-		weights = new float[numInputs + 1];
-		deltaWeights = new float[numInputs + 1];
+		weights = new double[numInputs + 1];
+		deltaWeights = new double[numInputs + 1];
 		
-		for(int i = 0; i < numInputs + 1; i++) {
+		for(int i = 0; i < numInputs + 1; i++)
 			inputs[i] = new SimpleValue(0);
-			weights[i] = (float)(2 * Math.random() - 1);
-			deltaWeights[i] = 0.0f;
-		}
+		
+		this.resetWeights();
 		
 		inputs[0] = BIAS;
 		
-		delta = 0.0f;
-		output = 0.0f;
+		delta = 0;
+		output = 0;
 	}
 
 	@Override
-	public float getValue() {
+	public double getValue()
+	{
 		return output;
 	}
 	
 	@Override
-	public String toString() {
-		return Float.toString(output);
+	public String toString()
+	{
+		return Double.toString(output);
 	}
 	
-	public void setInputs(IValue[] inputs) {
+	public void setInputs(IValue[] inputs)
+	{
 		if(inputs.length + 1 != this.inputs.length)
 			throw new IllegalArgumentException("Input arrays lengths must be the same!");
 		
@@ -53,37 +56,51 @@ public class Neuron implements IValue{
 		System.arraycopy(inputs, 0, this.inputs, 1, inputs.length);
 	}
 	
-	private float activationFunction(float value) {
-		return Util.sigmoid(value);
+	public void computeOutput()
+	{
+		output = Util.sigmoid(Util.weightedSum(inputs, weights));
 	}
 	
-	public void computeOutput() {
-		output = activationFunction(Util.weightedSum(inputs, weights));
-		delta = 0.0f;
+	public void resetDelta()
+	{
+		delta = 0;
 	}
 	
-	public void setExpectedOutput(SimpleValue expectedOutput) {
+	public double setExpectedOutput(SimpleValue expectedOutput)
+	{
 		delta = expectedOutput.value - output;
+		return delta * delta;
 	}
+	
+	public void backPropagation()
+	{
+		double derivative = output * (1 - output);
 		
-	public float deltaRule(float learningRate, float momentum) {
-		
-		float difference = delta;
-		
-		delta *= output * (1 - output);
-		
-		// Update weights
-		for(int i = 0; i < weights.length; i++) {
-			// Update delta in connected nodes before updating weights
+		for(int i = 0; i < inputs.length; i++)
+		{
 			if(inputs[i] instanceof Neuron)
 				((Neuron)inputs[i]).delta += weights[i] * delta;
 			
-			deltaWeights[i] *= momentum;
-			deltaWeights[i] += learningRate * inputs[i].getValue() * delta;
-			
-			weights[i] += deltaWeights[i];
+			deltaWeights[i] += derivative * inputs[i].getValue() * delta;
 		}
-		
-		return difference * difference;
+	}
+	
+	public void updateWeights(double learningRate, double momentum)
+	{
+		for(int i = 0; i < weights.length; i++)
+		{		
+			weights[i] += learningRate * deltaWeights[i];
+			
+			deltaWeights[i] *= momentum;
+		}
+	}
+	
+	public void resetWeights()
+	{
+		for(int i = 0; i < weights.length; i++)
+		{
+			weights[i] = 2 * Math.random() - 1;
+			deltaWeights[i] = 0;
+		}
 	}
 }
