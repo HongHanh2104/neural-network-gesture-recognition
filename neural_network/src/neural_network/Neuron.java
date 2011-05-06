@@ -1,7 +1,5 @@
 package neural_network;
 
-import util.Util;
-
 public class Neuron implements IValue
 {
 	private static final SimpleValue BIAS = new SimpleValue(-1);
@@ -58,7 +56,12 @@ public class Neuron implements IValue
 	
 	public void computeOutput()
 	{
-		output = Util.sigmoid(Util.weightedSum(inputs, weights));
+		double sum = 0.0f;
+		
+		for(int i = 0; i < inputs.length; i++)
+			sum += inputs[i].getValue() * weights[i];
+		
+		output = (1 / (1 + Math.exp(-sum)));
 	}
 	
 	public void resetDelta()

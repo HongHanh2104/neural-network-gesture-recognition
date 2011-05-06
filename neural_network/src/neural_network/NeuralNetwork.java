@@ -3,7 +3,6 @@ package neural_network;
 import training.ITrainingInstance;
 import training.TrainingSet;
 
-
 public class NeuralNetwork
 {
 	public static enum LearningMethod {INCREMENTAL, BATCH}
@@ -11,8 +10,6 @@ public class NeuralNetwork
 	private SimpleValue[] 	inputs;
 	private Neuron[][] 		neurons;
 	private Neuron[]		outputs;
-	
-	private TrainingSet 	trainingSet = null;
 	
 	public NeuralNetwork(int[] structure)
 	{
@@ -44,7 +41,18 @@ public class NeuralNetwork
 		for(int i = 0; i < inputs.length; i++)
 			inputs[i] = new SimpleValue(0);
 		
-		this.setInputs(inputs);
+		for(Neuron neuron : neurons[0])
+			neuron.setInputs(inputs);
+	}
+	
+	public int getNumberOfInputs()
+	{
+		return inputs.length;
+	}
+	
+	public int getNumberOfOutputs()
+	{
+		return outputs.length;
 	}
 	
 	public void setInputs(SimpleValue[] inputs)
@@ -52,10 +60,8 @@ public class NeuralNetwork
 		if(inputs.length != this.inputs.length)
 			throw new IllegalArgumentException("Input arrays lengths must be the same!");
 		
-		this.inputs = inputs;
-		
-		for(Neuron neuron : neurons[0])
-			neuron.setInputs(inputs);
+		for(int i = 0; i < this.inputs.length; i++)
+			this.inputs[i].value = inputs[i].value;
 		
 		// Compute output for all neurons (forward propagation)
 		for(int layer = 0; 	layer  < neurons.length; 		layer++ )
@@ -68,16 +74,6 @@ public class NeuralNetwork
 		return outputs;
 	}
 	
-	public void setTrainingSet(TrainingSet trainingSet)
-	{
-		if(trainingSet.getNumberOfInputs() != inputs.length)
-			throw new IllegalArgumentException("Training set's inputs must be the same as the network's inputs!");
-		if(trainingSet.getNumberOfOutputs() != outputs.length)
-			throw new IllegalArgumentException("Training set's outputs must be the same as the network's outputs!");
-		
-		this.trainingSet = trainingSet;
-	}
-	
 	public void reset()
 	{
 		for(int layer = 0; 	layer  < neurons.length; 		layer++ )
@@ -85,27 +81,25 @@ public class NeuralNetwork
 			neurons[layer][neuron].resetWeights();
 	}
 	
-	public double train(LearningMethod method, int iterations, double learningRate, double momentum)
+	public void train(LearningMethod method, TrainingSet trainingSet, int iterations, double learningRate, double momentum)
 	{
-		if(this.trainingSet == null || this.trainingSet.getNumberOfInstances() == 0)
-			throw new RuntimeException("Can't train the neural network without a non-empty training set!");
-		
-		double error = 0;
+		checkValidTrainingSet(trainingSet);
 		
 		while(iterations-- > 0)
-		{
-			error = 0;
-			
+		{			
 			for(ITrainingInstance instance : trainingSet)
 			{
-				this.resetDeltas();
+				// Reset deltas
+				for(int layer = 0; 	layer  < neurons.length; 		layer++ )
+				for(int neuron = 0; neuron < neurons[layer].length; neuron++)
+					neurons[layer][neuron].resetDelta();
 					
 				// Set inputs
 				this.setInputs(instance.getInputs());
 				
 				// Set expected outputs
 				for(int neuron = 0; neuron < outputs.length; neuron++)
-					error += outputs[neuron].setExpectedOutput(instance.getOutputs()[neuron]);
+					outputs[neuron].setExpectedOutput(instance.getOutputs()[neuron]);
 				
 				// Backpropagation of delta
 				for(int layer = neurons.length - 1; 	layer >= 0;						layer-- )
@@ -121,15 +115,35 @@ public class NeuralNetwork
 			if(method == LearningMethod.BATCH)
 				this.updateWeights(learningRate, momentum);
 		}
-		
-		return error;
 	}
 	
-	private void resetDeltas()
+	public double rootMeanSquaredError(TrainingSet trainingSet)
 	{
-		for(int layer = 0; 	layer  < neurons.length; 		layer++ )
-		for(int neuron = 0; neuron < neurons[layer].length; neuron++)
-			neurons[layer][neuron].resetDelta();
+		checkValidTrainingSet(trainingSet);
+		
+		double error = 0;
+		
+		for(ITrainingInstance instance : trainingSet)
+		{
+			// Set inputs
+			this.setInputs(instance.getInputs());
+			
+			// Get error from expected outputs
+			for(int neuron = 0; neuron < outputs.length; neuron++)
+				error += outputs[neuron].setExpectedOutput(instance.getOutputs()[neuron]);
+		}
+		
+		return Math.sqrt(error / trainingSet.getNumberOfInstances());
+	}
+	
+	private void checkValidTrainingSet(TrainingSet trainingSet)
+	{
+		if(trainingSet == null || trainingSet.getNumberOfInstances() == 0)
+			throw new IllegalArgumentException("Can't train the neural network without a non-empty training set!");
+		if(trainingSet.getNumberOfInputs() != inputs.length)
+			throw new IllegalArgumentException("Training set's inputs must be the same as the network's inputs!");
+		if(trainingSet.getNumberOfOutputs() != outputs.length)
+			throw new IllegalArgumentException("Training set's outputs must be the same as the network's outputs!");
 	}
 	
 	private void updateWeights(double learningRate, double momentum)

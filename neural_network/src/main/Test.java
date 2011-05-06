@@ -1,5 +1,7 @@
 package main;
 
+import graphictest.GNNTester;
+
 import java.util.Arrays;
 
 import training.ITrainingInstance;
@@ -9,10 +11,13 @@ import neural_network.NeuralNetwork;
 
 public class Test
 {
-	public static void main(String[] args)
-	{		
+	private static enum TestType {CONSOLE, GRAPHIC};
+	private static final TestType type = TestType.GRAPHIC;
+	
+	public static void main(String[] args) throws InterruptedException
+	{	
 		// Training set for XOR function
-		TrainingSet trainingSet = new TrainingSet(2, 1);
+		TrainingSet ts = new TrainingSet(2, 1);
 		for(int i = 0; i < 4; i++)
 		{
 			int input1 = (i >> 0) & 1;
@@ -24,36 +29,54 @@ public class Test
 			
 			ITrainingInstance newInstance = new SimpleTrainingInstance(inputs, outputs);
 			
-			trainingSet.addInstance(newInstance);
+			ts.addInstance(newInstance);
 		}
 		
 		NeuralNetwork nn = new NeuralNetwork(new int[]{2, 4, 1});
 		
-		// Train
-		nn.setTrainingSet(trainingSet);
-		
-		double learningRate = 0.5;
+		// Train		
+		double learningRate = 0.1;
 		double momentum = 0.9;
 		
-		double error;
-		
-		int iterations = 0;
-		do
+		switch(type)
 		{
-			error = nn.train(NeuralNetwork.LearningMethod.BATCH, 1000, learningRate, momentum);
-			
-			System.out.println(error);
-			iterations++;
-			if(iterations == 100) break;
-		} while(Math.abs(error) > 0.0001);
-		
-		System.out.println(iterations + " " + error);
-		
-		// Test
-		for(ITrainingInstance instance : trainingSet)
-		{
-			nn.setInputs(instance.getInputs());
-			System.out.println(instance + " - " + Arrays.toString(nn.getOutput()));
+			case CONSOLE:
+				double error = 0;
+				int iterations = 0;
+				for(iterations = 0; iterations < 1000; iterations++)
+				{
+					nn.train(NeuralNetwork.LearningMethod.INCREMENTAL, ts, 1000, learningRate, momentum);
+					
+					error = nn.rootMeanSquaredError(ts);
+					
+					System.out.println(error);
+					
+					if(Math.abs(error) < 0.001) break;
+				}
+				
+				System.out.println(iterations + " " + error);
+				
+				// Test
+				for(ITrainingInstance instance : ts)
+				{
+					nn.setInputs(instance.getInputs());
+					System.out.println(instance + " - " + Arrays.toString(nn.getOutput()));
+				}
+				
+				break;
+			case GRAPHIC:
+				GNNTester tester = new GNNTester(nn, ts);
+				
+				for(iterations = 0; iterations < 10000; iterations++)
+				{
+					nn.train(NeuralNetwork.LearningMethod.BATCH, ts, 1, learningRate, momentum);
+					
+					tester.updateInfo();
+					
+					Thread.sleep(50);
+				}
+				
+				break;
 		}
 		
 		System.out.println("Fin.");
