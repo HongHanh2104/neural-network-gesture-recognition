@@ -40,9 +40,9 @@ public class TestSerialize {
 			if(Math.abs(error) < 0.001) break;
 		}
 		
-
-		Neuron n = new Neuron(5);
 		Serializer.Serialize("hola.xml", nn);
+		
+		NeuralNetwork nn2 = (NeuralNetwork)Serializer.DeSerialize("hola.xml");
 		
 		System.out.println("END");
 	}
