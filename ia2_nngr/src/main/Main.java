@@ -23,7 +23,7 @@ public class Main {
 		
 		TrainingSet ts = new TrainingSet(numInputs, numOutputs);
 
-		String dir = "./train/right/fingers/0/";
+		String dir = "./train/hand/right/fingers/0/";
 		
 		File actual = new File(dir);
         for(File f : actual.listFiles())
@@ -31,25 +31,9 @@ public class Main {
         	String filename = dir + f.getName();
         	if(filename.endsWith(".png"))
         	{
-	    		try 
-	    		{
-	    			ImageIO.write(Resiz0r.open(filename, 30, 30), "png", new File("output.png"));
-	    		}
-	    		catch (Exception e) { }
+
         	}
         }
-
-		
-		/*try 
-		{
-			ImageIO.write(Resiz0r.open("troll.png", 30, 30), "png", new File("output.png"));
-		}
-		catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		//Resiz0r.open("troll.png", 30, 30), "png", new File("output.png")
-		*/
 		
 		
 		double[] inputs = new double[numInputs];
