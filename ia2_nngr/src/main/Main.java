@@ -1,12 +1,10 @@
 package main;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 
-import javax.imageio.ImageIO;
 
-import resiz0r.Resiz0r;
+import train.TrainingImage;
 import training.ITrainingInstance;
 import training.TrainingSet;
 import neural_network.NeuralNetwork;
@@ -15,9 +13,9 @@ public class Main {
 
 	public static void main(String[] args) 
 	{
-		int numInputs = 2;
+		int numInputs = 30*30;
 		int numOutputs = 1;
-		int numHiddenNeurons = 4;
+		int numHiddenNeurons = 10;
 		
 		NeuralNetwork nn = new NeuralNetwork(new int[]{numInputs, numHiddenNeurons, numOutputs});
 		
@@ -31,18 +29,18 @@ public class Main {
         	String filename = dir + f.getName();
         	if(filename.endsWith(".png"))
         	{
-
+        		TrainingImage ti = new TrainingImage(filename);
+        		
+        		double[] inputs = ti.getTrainingInputs();
+        		double[] outputs = new double[numOutputs];
+        		outputs[0] = 1;
+        		
+        		ITrainingInstance newInstance = new SimpleTrainingInstance(inputs, outputs);
+        		ts.addInstance(newInstance);
         	}
         }
 		
-		
-		double[] inputs = new double[numInputs];
-		double[] outputs = new double[numOutputs];
-		ITrainingInstance newInstance = new SimpleTrainingInstance(inputs, outputs);
-		
-		ts.addInstance(newInstance);
-		
-		
+
 		// Train		
 		double learningRate = 0.1;
 		double momentum = 0.9;
