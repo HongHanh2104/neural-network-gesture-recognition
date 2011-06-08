@@ -12,12 +12,20 @@ public class Main {
 
 	public static void main(String[] args)
 	{
-		String dir = "./images";
-		String output = "./output";
+		String imagePath = "/home/jacano/dev/workspace/images/";
 		
-		File f = new File(dir);
-
-        cloneAndResize(output, f);
+		String outputFolder = "output/";
+		String output = imagePath + outputFolder;
+		
+		String folder1 = "test";
+		String dir1 = imagePath + folder1;
+		File f1 = new File(dir1);
+        cloneAndResize(output + folder1, f1);
+        
+        String folder2 = "train";
+		String dir2 = imagePath + folder2;
+		File f2 = new File(dir2);
+        cloneAndResize(output + folder2, f2);
         
         System.out.println("End!");
 	}
