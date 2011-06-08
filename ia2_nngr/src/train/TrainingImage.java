@@ -37,7 +37,8 @@ public class TrainingImage
         byte[] pixels = (byte[]) image.getData().getDataElements(0, 0, width, height, null);
         for (int i = 0; i < res.length; i++) 
         {
-            res[i] = (double) (pixels[i] & 0xFF);
+        	int grayValue = pixels[i] & 0xFF;
+            res[i] = ((double)grayValue) / 255.0;
         }
 		
 		return res;
