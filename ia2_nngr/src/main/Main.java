@@ -13,6 +13,8 @@ import neural_network.SimpleValue;
 
 public class Main {
 
+	static String imagePath = "/home/jacano/dev/workspace/images/output/";
+	
 	public static void main(String[] args) 
 	{
 		int numInputs = 30*30;
@@ -23,14 +25,14 @@ public class Main {
 		
 		TrainingSet ts = new TrainingSet(numInputs, numOutputs);
 
-		String dir1 = "./train/hand/right/fingers/0/";
+		String dir1 = imagePath + "train/hand/right/fingers/0/";
 		
 		SimpleValue outputs1[] = new SimpleValue[numOutputs];
 		outputs1[0] = new SimpleValue(1.0);
 		outputs1[1] = new SimpleValue(0.0);
 		trainImageDir(outputs1, ts, dir1);
 		
-		String dir2 = "./train/hand/right/fingers/5/";
+		String dir2 = imagePath + "train/hand/right/fingers/5/";
 		
 		SimpleValue outputs2[] = new SimpleValue[numOutputs];
 		outputs2[0] = new SimpleValue(0.0);
