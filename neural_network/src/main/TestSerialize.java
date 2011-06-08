@@ -1,9 +1,10 @@
 package main;
 
+import java.util.Arrays;
+
 import training.ITrainingInstance;
 import training.TrainingSet;
 import neural_network.NeuralNetwork;
-import neural_network.Neuron;
 
 public class TestSerialize {
 
@@ -40,9 +41,18 @@ public class TestSerialize {
 			if(Math.abs(error) < 0.001) break;
 		}
 		
-		Serializer.Serialize("hola.xml", nn);
+		String out1 = Arrays.toString(nn.getOutput());
 		
-		NeuralNetwork nn2 = (NeuralNetwork)Serializer.DeSerialize("hola.xml");
+		Serializer.Serialize("nn.xml", nn);
+		
+		NeuralNetwork nn2 = (NeuralNetwork)Serializer.DeSerialize("nn.xml");
+		
+		String out2 = Arrays.toString(nn2.getOutput());
+		
+		if(out1.equals(out2))
+		{
+			System.out.println("good!!");
+		}
 		
 		System.out.println("END");
 	}
