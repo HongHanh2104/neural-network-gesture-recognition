@@ -5,7 +5,6 @@ import java.util.Arrays;
 
 
 import train.ImageTrainingInstance;
-import training.ITrainingInstance;
 import training.TrainingSet;
 import neural_network.NeuralNetwork;
 import neural_network.NeuralNetwork.LearningMethod;
@@ -13,7 +12,7 @@ import neural_network.SimpleValue;
 
 public class Main {
 
-	static String imagePath = "/home/jacano/dev/workspace/images/output/";
+	static String imageOutputPath = "/home/jacano/dev/workspace/images/output/";
 	
 	public static void main(String[] args) 
 	{
@@ -25,14 +24,14 @@ public class Main {
 		
 		TrainingSet ts = new TrainingSet(numInputs, numOutputs);
 
-		String dir1 = imagePath + "train/hand/right/fingers/0/";
+		String dir1 = imageOutputPath + "train/hand/right/fingers/0/";
 		
 		SimpleValue outputs1[] = new SimpleValue[numOutputs];
 		outputs1[0] = new SimpleValue(1.0);
 		outputs1[1] = new SimpleValue(0.0);
 		trainImageDir(outputs1, ts, dir1);
 		
-		String dir2 = imagePath + "train/hand/right/fingers/5/";
+		String dir2 = imageOutputPath + "train/hand/right/fingers/5/";
 		
 		SimpleValue outputs2[] = new SimpleValue[numOutputs];
 		outputs2[0] = new SimpleValue(0.0);
@@ -48,17 +47,44 @@ public class Main {
 		int errorChecks = 50;
 		LearningMethod lm = NeuralNetwork.LearningMethod.BATCH;
 		
-		
+		System.out.println("Training network...");
 		trainNeuralNetwork(nn, ts, learningRate, momentum, numIterations, errorChecks, lm, true);
 		
-		
-		// Test
-		for(ITrainingInstance instance : ts)
+		/*for(ITrainingInstance instance : ts)
 		{
 			nn.setInputs(instance.getInputs());
 			System.out.println(instance + " - " + Arrays.toString(nn.getOutput()));
-		}
+		}*/
 		
+		System.out.println("Testing new instances...");
+		
+		String dir3 = imageOutputPath + "test/hand/right/fingers/0/";
+		File f3 = new File(dir3);
+		
+        for(File ff : f3.listFiles())
+        {
+        	String path = ff.getPath();
+        	if(path.endsWith(".png"))
+        	{
+	        	ImageTrainingInstance iti = new ImageTrainingInstance(path, null);
+	        	nn.setInputs(iti.getInputs());
+	        	System.out.println(Arrays.toString(nn.getOutput()));
+        	}
+        }
+        
+		String dir4 = imageOutputPath + "test/hand/right/fingers/5/";
+		File f4 = new File(dir4);
+		
+        for(File ff : f4.listFiles())
+        {
+        	String path = ff.getPath();
+        	if(path.endsWith(".png"))
+        	{
+	        	ImageTrainingInstance iti = new ImageTrainingInstance(path, null);
+	        	nn.setInputs(iti.getInputs());
+	        	System.out.println(Arrays.toString(nn.getOutput()));
+        	}
+        }
 		
 		System.out.println("END");
 	}

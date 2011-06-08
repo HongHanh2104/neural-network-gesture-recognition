@@ -22,6 +22,13 @@ public class ImageTrainingInstance implements ITrainingInstance
 	private SimpleValue[] inputs;
 	private SimpleValue[] outputs;
 	
+		
+	public ImageTrainingInstance(String filename, SimpleValue[] outputs)
+	{
+		setImage(filename);
+		processInputs();
+		this.outputs = outputs;
+	}
 	
 	@Override
 	public SimpleValue[] getInputs()
@@ -40,7 +47,7 @@ public class ImageTrainingInstance implements ITrainingInstance
 		return Arrays.toString(inputs) + " -> " + Arrays.toString(outputs);
 	}
 	
-	public ImageTrainingInstance(String filename, SimpleValue[] outputs)
+	private void setImage(String filename)
 	{
 		try 
 		{
@@ -54,10 +61,6 @@ public class ImageTrainingInstance implements ITrainingInstance
 			graphics.dispose();
 		} 
 		catch (Exception e) { System.out.println("Image error!"); }
-		
-		this.outputs = outputs;
-		
-		processInputs();
 	}
 	
 	private void processInputs()
