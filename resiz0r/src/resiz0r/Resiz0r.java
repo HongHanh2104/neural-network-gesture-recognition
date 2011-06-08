@@ -8,7 +8,6 @@ import java.awt.image.BufferedImageOp;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,8 +15,8 @@ import javax.imageio.ImageIO;
 
 public class Resiz0r {
 
-	public static BufferedImage open(String path, int width, int height) throws IOException{
-		
+	public static BufferedImage open(String path, int width, int height) throws Exception 
+	{
 		// Open the image to resize
 		BufferedImage image = ImageIO.read(new File(path));
 		

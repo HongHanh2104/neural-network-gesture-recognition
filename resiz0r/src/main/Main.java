@@ -1,16 +1,17 @@
 package main;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
 import resiz0r.Resiz0r;
 
+
 public class Main {
 
-	public static void main(String[] args) throws IOException {
-		
+	public static void main(String[] args)
+	{
 		String dir = "./images";
 		String output = "./output";
 		
@@ -39,7 +40,9 @@ public class Main {
 		    		{
 	        			File outputDir = new File(output);
 	        			if(!outputDir.exists()) outputDir.mkdirs();
-		    			ImageIO.write(Resiz0r.open(input, 30, 30), "png", new File(out));
+
+        				BufferedImage img = Resiz0r.open(input, 30, 30);
+        				ImageIO.write(img,"png", new File(out));
 		    		}
 		    		catch (Exception e) { }
 	        	}
