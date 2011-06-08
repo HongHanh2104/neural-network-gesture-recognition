@@ -27,14 +27,14 @@ public class Main {
 		double outputs1[] = new double[numOutputs];
 		outputs1[0] = 1;
 		outputs1[1] = 0;
-		trainPhotoDir(outputs1, ts, dir1);
+		trainImageDir(outputs1, ts, dir1);
 		
 		String dir2 = "./train/hand/right/fingers/5/";
 		
 		double outputs2[] = new double[numOutputs];
 		outputs2[0] = 0;
 		outputs2[1] = 1;
-		trainPhotoDir(outputs2, ts, dir2);
+		trainImageDir(outputs2, ts, dir2);
 		
 
 		// Train		
@@ -80,7 +80,7 @@ public class Main {
 		if(verbose) System.out.println(iterations*iter + " " + error);
 	}
 	
-	private static void trainPhotoDir(double[] outputs, TrainingSet ts, String dir) 
+	private static void trainImageDir(double[] outputs, TrainingSet ts, String dir) 
 	{
 		File actual = new File(dir);
         for(File f : actual.listFiles())
