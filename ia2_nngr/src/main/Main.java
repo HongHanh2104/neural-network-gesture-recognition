@@ -41,10 +41,10 @@ public class Main {
 		trainImageDir(outputs2, ts, dir2);
 		
 		
-		double learningRate = 0.1;
-		double momentum = 0.98;
+		double learningRate = 0.4;
+		double momentum = 0.9;
 		
-		int numIterations = 100;
+		int numIterations = 1000;
 		int errorChecks = 50;
 		LearningMethod lm = NeuralNetwork.LearningMethod.BATCH;
 		
