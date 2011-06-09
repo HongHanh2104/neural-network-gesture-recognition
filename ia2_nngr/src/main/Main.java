@@ -12,7 +12,7 @@ import neural_network.SimpleValue;
 
 public class Main {
 
-	static String imageOutputPath = "/home/jacano/dev/workspace/images/output/";
+	static String workspace = "/home/jacano/dev/workspace/";
 	
 	public static void main(String[] args) 
 	{
@@ -24,6 +24,8 @@ public class Main {
 		
 		TrainingSet ts = new TrainingSet(numInputs, numOutputs);
 
+		String imageOutputPath = workspace + "images/output/";
+		
 		String dir1 = imageOutputPath + "train/hand/right/fingers/0/";
 		
 		SimpleValue outputs1[] = new SimpleValue[numOutputs];
@@ -38,8 +40,7 @@ public class Main {
 		outputs2[1] = new SimpleValue(1.0);
 		trainImageDir(outputs2, ts, dir2);
 		
-
-		// Train		
+		
 		double learningRate = 0.1;
 		double momentum = 0.98;
 		
@@ -59,33 +60,18 @@ public class Main {
 		System.out.println("Testing new instances...");
 		
 		String dir3 = imageOutputPath + "test/hand/right/fingers/0/";
-		File f3 = new File(dir3);
-		
-        for(File ff : f3.listFiles())
-        {
-        	String path = ff.getPath();
-        	if(path.endsWith(".png"))
-        	{
-	        	ImageTrainingInstance iti = new ImageTrainingInstance(path, null);
-	        	nn.setInputs(iti.getInputs());
-	        	System.out.println(Arrays.toString(nn.getOutput()));
-        	}
-        }
+		ShowOutput(nn, dir3);
         
 		String dir4 = imageOutputPath + "test/hand/right/fingers/5/";
-		File f4 = new File(dir4);
+		ShowOutput(nn, dir4);
 		
-        for(File ff : f4.listFiles())
-        {
-        	String path = ff.getPath();
-        	if(path.endsWith(".png"))
-        	{
-	        	ImageTrainingInstance iti = new ImageTrainingInstance(path, null);
-	        	nn.setInputs(iti.getInputs());
-	        	System.out.println(Arrays.toString(nn.getOutput()));
-        	}
-        }
+		String TrainedNNPath = workspace + "trained_networks/";
+		String dirnn = TrainedNNPath + "nn.xml";
 		
+        System.out.println("Serializing neural network...");
+        Serializer.Serialize(dirnn, nn);
+        
+        
 		System.out.println("END");
 	}
 
@@ -119,6 +105,22 @@ public class Main {
         	{
         		ImageTrainingInstance iti = new ImageTrainingInstance(filename, outputs);
         		ts.addInstance(iti);
+        	}
+        }
+	}
+	
+	private static void ShowOutput(NeuralNetwork nn, String dir)
+	{
+		File f = new File(dir);
+		
+        for(File ff : f.listFiles())
+        {
+        	String path = ff.getPath();
+        	if(path.endsWith(".png"))
+        	{
+	        	ImageTrainingInstance iti = new ImageTrainingInstance(path, null);
+	        	nn.setInputs(iti.getInputs());
+	        	System.out.println(Arrays.toString(nn.getOutput()));
         	}
         }
 	}
