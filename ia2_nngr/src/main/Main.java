@@ -1,80 +1,163 @@
 package main;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import neural_network.NeuralNetwork;
-import neural_network.NeuralNetwork.LearningMethod;
 import train.ImageTrainingInstance;
+import train.PokemonTest;
+import train.PokemonTrain;
+import train.TrainingParameters;
 import training.TrainingSet;
 import util.Util;
 
 public class Main {
 
-	public static void main(String[] args) 
-	{		
-		int numInputs = 30*30;
-		int numOutputs = 2;
-		int numHiddenNeurons = 10;
+	public static TrainingSet trainingSetGenerator(List<String> dirs)
+	{
+		TrainingSet ts = null;
 		
-		NeuralNetwork nn = new NeuralNetwork(new int[]{numInputs, numHiddenNeurons, numOutputs});
+		int size = dirs.size();
+		double outputs[][] = new double[size][];
 		
-		TrainingSet ts = new TrainingSet(numInputs, numOutputs);
-		addTrainingInstancesFromDir(ts, "train/hand/right/fingers/0/", new double[]{1.0, 0.0});
-		addTrainingInstancesFromDir(ts, "train/hand/right/fingers/5/", new double[]{0.0, 1.0});
+		for(int j = 0 ; j < size ; j++)
+		{
+			outputs[j] = new double[size];
+			for(int k = 0 ; k < size ; k++)
+			{
+				outputs[j][k] = (k == j) ? 1.0 : 0.0;
+			}
+		}
 		
-		double learningRate = 0.01;
-		double momentum = 0.2;
-		int numIterations = 1000;
-		int errorChecks = 50;
-		LearningMethod lm = NeuralNetwork.LearningMethod.BATCH;
+		int i = 0;
+		for(String dir : dirs)
+		{
+			String workspace = Util.getEclipseWorkspace();
+			String path = workspace + "images/output/" + dir;
+			File actual = new File(path);
+			
+	        for(File f : actual.listFiles())
+	        {
+	        	String filename = f.getAbsolutePath();
+	        	if(filename.endsWith(".png"))
+	        	{
+	        		ImageTrainingInstance iti = new ImageTrainingInstance(filename, outputs[i]);
+	        		if(ts == null)
+	        		{
+	        			ts = new TrainingSet(iti.getInputs().length, iti.getOutputs().length);
+	        		}
+	        		ts.addInstance(iti);
+	        	}
+	        }
+	        i++;
+		}
 		
-		System.out.println("Training network...");
-		trainNeuralNetwork(nn, ts, learningRate, momentum, numIterations, errorChecks, lm, true);
-		
-		System.out.println("Testing new instances...");
-		ShowOutput(nn, "test/hand/right/fingers/0/");
-		ShowOutput(nn, "test/hand/right/fingers/5/");
-		
-		
-        System.out.println("Serializing neural network...");
-        Serializer.Serialize("trained_networks/nn.xml", nn);
-        
-		System.out.println("END");
-	}
-
-	public static void addTrainingInstancesFromDir(TrainingSet ts, String dir, double[] outputs)
-	{		
-		String workspace = Util.getEclipseWorkspace();
-		String path = workspace + "images/output/" + dir;
-		File actual = new File(path);
-		
-        for(File f : actual.listFiles())
-        {
-        	String filename = f.getAbsolutePath();
-        	if(filename.endsWith(".png"))
-        	{
-        		ImageTrainingInstance iti = new ImageTrainingInstance(filename, outputs);
-        		ts.addInstance(iti);
-        	}
-        }
+		return ts;
 	}
 	
-	private static void trainNeuralNetwork(NeuralNetwork nn, TrainingSet ts, double learningRate, double momentum, int numIterations, int errorChecks, LearningMethod lm, boolean verbose)
+	
+	public static void createAndTrainNetwork(PokemonTrain p, int[] numHiddenNeurons)
+	{
+		List<String> dirs = p.dirs;
+		String networkName = p.networkName;
+		TrainingParameters tp = p.tp;
+		
+		TrainingSet ts = trainingSetGenerator(dirs);
+		
+		int[] structure = new int[numHiddenNeurons.length + 2];
+		structure[0] = ts.getNumberOfInputs();
+		System.arraycopy(numHiddenNeurons, 0, structure, 1, numHiddenNeurons.length);
+		structure[structure.length - 1] = ts.getNumberOfOutputs();
+		NeuralNetwork nn = new NeuralNetwork(structure);
+		
+		System.out.println("Training network...");
+		trainNeuralNetwork(nn, ts, tp, true);
+		
+        System.out.println("Serializing neural network...");
+		try
+		{
+			File file = new File(networkName + ".nn");
+			nn.serialize(file);
+		}
+		catch(Exception e){ e.printStackTrace(); }
+	}
+	
+	public static void test(PokemonTest p)
+	{
+		String networkName = p.networkName;
+		List<String> dirs = p.dirs;
+		
+		NeuralNetwork nn = null;
+		
+		System.out.println("Unserializing...");
+		try
+		{
+			File file = new File(networkName + ".nn");
+			nn = NeuralNetwork.unserialize(file);
+		}
+		catch(Exception e){ e.printStackTrace(); }
+		
+		System.out.println("Testing new instances...");
+		for(String dir : dirs)
+		{
+			ShowOutput(nn, dir);
+		}
+	}
+	
+	
+	public static void main(String[] args) 
+	{		
+		TrainingParameters tp = new TrainingParameters();
+		tp.learningRate = 0.01;
+		tp.momentum = 0.2;
+		tp.numIterations = 10000;
+		tp.errorChecks = 50;
+		tp.maxError = 0.001;
+		tp.lm = NeuralNetwork.LearningMethod.BATCH;
+		
+		List<String> dirs = new ArrayList<String>();
+		dirs.add("train/hand/right/fingers/0/");
+		dirs.add("train/hand/right/fingers/5/");
+		
+		PokemonTrain pt = new PokemonTrain();
+		pt.networkName = "OpenCloseRightHand";
+		pt.dirs = dirs;
+		pt.tp = tp;
+		
+		createAndTrainNetwork(pt, new int[]{ 4 });
+		
+		
+		List<String> dirs1 = new ArrayList<String>();
+		dirs.add("test/hand/right/fingers/0/");
+		dirs.add("test/hand/right/fingers/5/");
+		
+		PokemonTest ptt = new PokemonTest();
+		ptt.networkName = "OpenCloseRightHand";
+		ptt.dirs = dirs1;
+		
+		
+		test(ptt);
+	
+	}
+
+	
+	private static void trainNeuralNetwork(NeuralNetwork nn, TrainingSet ts, TrainingParameters tp, boolean verbose)
 	{
 		int iterations;
 		double error = 0;
 		
-		int iter = numIterations/errorChecks;
-		for(iterations = 0 ; iterations < errorChecks; iterations++)
+		int iter = tp.numIterations/tp.errorChecks;
+		for(iterations = 0 ; iterations < tp.errorChecks; iterations++)
 		{
-			nn.train(lm, ts, iter, learningRate, momentum);
+			nn.train(tp.lm, ts, iter, tp.learningRate, tp.momentum);
 			
 			error = nn.rootMeanSquaredError(ts);
 			
 			if(verbose) System.out.println(error);
 			
-			if(Math.abs(error) < 0.001) break;
+			if(Math.abs(error) < tp.maxError) break;
 		}
 		
 		if(verbose) System.out.println(iterations*iter + " " + error);
