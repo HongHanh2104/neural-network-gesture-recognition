@@ -12,7 +12,7 @@ import training.TrainingSet;
 public class Test
 {
 	private static enum TestType {CONSOLE, GRAPHIC};
-	private static final TestType type = TestType.CONSOLE;
+	private static final TestType type = TestType.GRAPHIC;
 	
 	public static void main(String[] args) throws InterruptedException
 	{	

@@ -133,6 +133,7 @@ public class GNNTesterApplet extends PApplet implements MouseWheelListener
 		}
 		
 		// Draw goal points
+		sphereDetail(5);
 		for(ITrainingInstance instance : ts)
 		{
 			int posX = (int)(totalSize * (instance.getInputs()[0].value - 0.5));
