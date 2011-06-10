@@ -1,10 +1,19 @@
 package neural_network;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+
 import training.ITrainingInstance;
 import training.TrainingSet;
 
-public class NeuralNetwork
+public class NeuralNetwork implements Serializable
 {
+	private static final long serialVersionUID = 2833318363317164695L;
+
 	public static enum LearningMethod {INCREMENTAL, BATCH}
 	
 	private SimpleValue[] 	inputs;
@@ -43,6 +52,26 @@ public class NeuralNetwork
 		
 		for(Neuron neuron : neurons[0])
 			neuron.setInputs(inputs);
+	}
+	
+	public void serialize(File file) throws Exception
+	{
+		FileOutputStream fout = new FileOutputStream(file);
+		ObjectOutputStream oos = new ObjectOutputStream(fout);
+		oos.writeObject(this);
+		oos.close();
+		fout.close();
+	}
+	
+	public static NeuralNetwork unserialize(File file) throws Exception 
+	{
+		FileInputStream fin = new FileInputStream(file);
+		ObjectInputStream ois = new ObjectInputStream(fin);
+		NeuralNetwork nn = (NeuralNetwork)ois.readObject();
+		ois.close();
+		fin.close();
+		
+		return nn;
 	}
 	
 	public int getNumberOfInputs()

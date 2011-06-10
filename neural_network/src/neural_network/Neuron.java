@@ -1,7 +1,11 @@
 package neural_network;
 
-public class Neuron implements IValue
+import java.io.Serializable;
+
+public class Neuron implements IValue, Serializable
 {
+	private static final long serialVersionUID = 7687714747936452242L;
+
 	private static final SimpleValue BIAS = new SimpleValue(-1);
 	
 	private IValue[] 	inputs;

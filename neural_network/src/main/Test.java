@@ -2,17 +2,17 @@ package main;
 
 import graphictest.GNNTester;
 
+import java.io.File;
 import java.util.Arrays;
 
+import neural_network.NeuralNetwork;
 import training.ITrainingInstance;
 import training.TrainingSet;
-
-import neural_network.NeuralNetwork;
 
 public class Test
 {
 	private static enum TestType {CONSOLE, GRAPHIC};
-	private static final TestType type = TestType.GRAPHIC;
+	private static final TestType type = TestType.CONSOLE;
 	
 	public static void main(String[] args) throws InterruptedException
 	{	
@@ -56,6 +56,24 @@ public class Test
 				
 				System.out.println(iterations + " " + error);
 				
+				// Test serialize
+				System.out.println("Serializing...");
+				try
+				{
+					File file = new File("nn.sav");
+					nn.serialize(file);
+				}
+				catch(Exception e){ e.printStackTrace(); }
+				
+				// Test unserialize
+				System.out.println("Unserializing...");
+				try
+				{
+					File file = new File("nn.sav");
+					nn = NeuralNetwork.unserialize(file);
+				}
+				catch(Exception e){ e.printStackTrace(); }
+				
 				// Test
 				for(ITrainingInstance instance : ts)
 				{
@@ -67,7 +85,7 @@ public class Test
 			case GRAPHIC:
 				GNNTester tester = new GNNTester(nn, ts);
 				
-				for(iterations = 0; iterations < 10000; iterations++)
+				for(int i = 0; i < 10000; i++)
 				{
 					nn.train(NeuralNetwork.LearningMethod.BATCH, ts, 1, learningRate, momentum);
 					
