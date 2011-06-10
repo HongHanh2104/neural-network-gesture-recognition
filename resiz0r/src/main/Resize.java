@@ -6,31 +6,29 @@ import java.io.File;
 import javax.imageio.ImageIO;
 
 import resiz0r.Resiz0r;
+import util.Util;
 
 
-public class Main {
+public class Resize {
 
-	static String workspace = "/home/jacano/dev/workspace/";
-	
 	public static void main(String[] args)
 	{
-		String imagePath = workspace + "images/";
-		
-		String outputFolder = "output/";
-		String output = imagePath + outputFolder;
-		
-		String folder1 = "test";
-		String dir1 = imagePath + folder1;
-        cloneAndResize(output + folder1, dir1);
-        
-        String folder2 = "train";
-		String dir2 = imagePath + folder2;
-        cloneAndResize(output + folder2, dir2);
+        cloneAndResize("output", "train");
+        cloneAndResize("output", "test");
         
         System.out.println("End!");
 	}
 
 	private static void cloneAndResize(String output, String dir) 
+	{
+		String workspace = Util.getEclipseWorkspace();
+		String imagePath = workspace + "images/";
+		String outputPath = imagePath + output + "/" + dir;
+		String path = imagePath + dir;
+		cloneAndResizeR(outputPath, path);
+	}
+	
+	private static void cloneAndResizeR(String output, String dir) 
 	{
 		File f = new File(dir);
 		
@@ -40,11 +38,11 @@ public class Main {
         	{
 	        	if(ff.isDirectory())
 	        	{
-	        		cloneAndResize(output + "/" + ff.getName(), ff.getPath());
+	        		cloneAndResizeR(output + "/" + ff.getName(), ff.getAbsolutePath());
 	        	}
 	        	else if(ff.isFile())
 	        	{
-	        		String input = ff.getPath();
+	        		String input = ff.getAbsolutePath();
 	        		String out = output + "/" + ff.getName();
 	        		try 
 		    		{
