@@ -8,24 +8,17 @@ import javax.imageio.ImageIO;
 import resiz0r.Resiz0r;
 import util.Util;
 
-
-public class Resize {
-
+public class Resize
+{
 	public static void main(String[] args)
 	{
-        cloneAndResize("output", "train");
-        cloneAndResize("output", "test");
+		String imagePath = Util.getEclipseWorkspace() + "images/";
+		String inputDir = imagePath + "input/";
+		String outputPath = imagePath + "output/";
+		
+		cloneAndResizeR(outputPath, inputDir);
         
         System.out.println("End!");
-	}
-
-	private static void cloneAndResize(String output, String dir) 
-	{
-		String workspace = Util.getEclipseWorkspace();
-		String imagePath = workspace + "images/";
-		String outputPath = imagePath + output + "/" + dir;
-		String path = imagePath + dir;
-		cloneAndResizeR(outputPath, path);
 	}
 	
 	private static void cloneAndResizeR(String output, String dir) 
@@ -50,7 +43,8 @@ public class Resize {
 	        			if(!outputDir.exists()) outputDir.mkdirs();
 
         				BufferedImage img = Resiz0r.open(input, 30, 30);
-        				ImageIO.write(img,"png", new File(out));
+        				ImageIO.write(img, "png", new File(out));
+        				System.out.println("Resized image " + ff.getAbsolutePath());
 		    		}
 		    		catch (Exception e) { }
 	        	}

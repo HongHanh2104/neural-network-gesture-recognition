@@ -13,7 +13,8 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
-public class Resiz0r {
+public class Resiz0r
+{
 
 	public static BufferedImage open(String path, int width, int height) throws Exception 
 	{
