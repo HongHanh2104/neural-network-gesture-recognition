@@ -3,13 +3,11 @@ package main;
 import java.io.File;
 import java.util.Arrays;
 
-
+import neural_network.NeuralNetwork;
+import neural_network.NeuralNetwork.LearningMethod;
 import train.ImageTrainingInstance;
 import training.TrainingSet;
 import util.Util;
-import neural_network.NeuralNetwork;
-import neural_network.NeuralNetwork.LearningMethod;
-import neural_network.SimpleValue;
 
 public class Main {
 
@@ -17,14 +15,13 @@ public class Main {
 	{		
 		int numInputs = 30*30;
 		int numOutputs = 2;
-		int numHiddenNeurons = 100;
+		int numHiddenNeurons = 10;
 		
 		NeuralNetwork nn = new NeuralNetwork(new int[]{numInputs, numHiddenNeurons, numOutputs});
 		
 		TrainingSet ts = new TrainingSet(numInputs, numOutputs);
 		addTrainingInstancesFromDir(ts, "train/hand/right/fingers/0/", new double[]{1.0, 0.0});
 		addTrainingInstancesFromDir(ts, "train/hand/right/fingers/5/", new double[]{0.0, 1.0});
-		
 		
 		double learningRate = 0.01;
 		double momentum = 0.2;
@@ -46,11 +43,8 @@ public class Main {
 		System.out.println("END");
 	}
 
-	public static void addTrainingInstancesFromDir(TrainingSet ts, String dir, double[] doubleOutput)
-	{
-		SimpleValue outputs[] = new SimpleValue[doubleOutput.length];
-		for(int i = 0 ; i < doubleOutput.length ; i++) outputs[i] = new SimpleValue(doubleOutput[i]);
-		
+	public static void addTrainingInstancesFromDir(TrainingSet ts, String dir, double[] outputs)
+	{		
 		String workspace = Util.getEclipseWorkspace();
 		String path = workspace + "images/output/" + dir;
 		File actual = new File(path);

@@ -18,7 +18,7 @@ public class ImageTrainingInstance implements ITrainingInstance
 	private SimpleValue[] inputs;
 	private SimpleValue[] outputs;
 	
-	public ImageTrainingInstance(String filename, SimpleValue[] outputs)
+	public ImageTrainingInstance(String filename, double[] outputs)
 	{
 		setInputs(filename);
 		setOutputs(outputs);
@@ -55,12 +55,13 @@ public class ImageTrainingInstance implements ITrainingInstance
 		}
 	}
 	
-	private void setOutputs(SimpleValue[] outputs) 
+	private void setOutputs(double[] outputs) 
 	{
 		if(outputs != null)
 		{
 			this.outputs = new SimpleValue[outputs.length];
-			for(int i = 0 ; i < outputs.length; i++) this.outputs[i] = new SimpleValue(outputs[i].value);
+			for(int i = 0 ; i < outputs.length; i++)
+				this.outputs[i] = new SimpleValue(outputs[i]);
 		}
 	}
 
