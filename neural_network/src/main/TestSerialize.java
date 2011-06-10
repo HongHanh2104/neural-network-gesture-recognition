@@ -5,6 +5,7 @@ import java.util.Arrays;
 import training.ITrainingInstance;
 import training.TrainingSet;
 import neural_network.NeuralNetwork;
+import neural_network.SimpleValue;
 
 public class TestSerialize {
 
@@ -34,19 +35,26 @@ public class TestSerialize {
 		int iterations = 0;
 		for(iterations = 0; iterations < 1000; iterations++)
 		{
-			nn.train(NeuralNetwork.LearningMethod.INCREMENTAL, ts, 1000, learningRate, momentum);
+			nn.train(NeuralNetwork.LearningMethod.INCREMENTAL, ts, 1, learningRate, momentum);
 			
 			error = nn.rootMeanSquaredError(ts);
 			
 			if(Math.abs(error) < 0.001) break;
 		}
 		
+		SimpleValue[] inputs = new SimpleValue[2];
+		inputs[0] = new SimpleValue(1.0);
+		inputs[1] = new SimpleValue(0.0);
+		
+		nn.setInputs(inputs);
 		String out1 = Arrays.toString(nn.getOutput());
 		
 		Serializer.Serialize("nn.xml", nn);
 		
 		NeuralNetwork nn2 = (NeuralNetwork)Serializer.DeSerialize("nn.xml");
 		
+		
+		nn2.setInputs(inputs);
 		String out2 = Arrays.toString(nn2.getOutput());
 		
 		if(out1.equals(out2))
