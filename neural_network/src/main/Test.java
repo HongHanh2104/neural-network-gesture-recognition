@@ -12,7 +12,7 @@ import training.TrainingSet;
 public class Test
 {
 	private static enum TestType {CONSOLE, GRAPHIC};
-	private static final TestType type = TestType.GRAPHIC;
+	private static final TestType type = TestType.CONSOLE;
 	
 	public static void main(String[] args) throws InterruptedException
 	{	
@@ -74,7 +74,7 @@ public class Test
 				}
 				catch(Exception e){ e.printStackTrace(); }
 				
-				// Test
+				// Test outputs
 				for(ITrainingInstance instance : ts)
 				{
 					nn.setInputs(instance.getInputs());
