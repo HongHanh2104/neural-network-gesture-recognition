@@ -6,15 +6,13 @@ import java.io.File;
 import javax.imageio.ImageIO;
 
 import resiz0r.Resiz0r;
-import util.Util;
 
 public class Resize
 {
 	public static void main(String[] args)
 	{
-		String imagePath = Util.getEclipseWorkspace() + "images/";
-		String inputDir = imagePath + "input/";
-		String outputPath = imagePath + "output/";
+		String inputDir = "input/";
+		String outputPath = "output/";
 		
 		cloneAndResizeR(outputPath, inputDir);
         
