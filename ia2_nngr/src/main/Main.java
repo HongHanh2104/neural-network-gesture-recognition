@@ -11,7 +11,6 @@ import train.PokemonTest;
 import train.PokemonTrain;
 import train.TrainingParameters;
 import training.TrainingSet;
-import util.Util;
 
 public class Main {
 
@@ -34,8 +33,7 @@ public class Main {
 		int i = 0;
 		for(String dir : dirs)
 		{
-			String workspace = Util.getEclipseWorkspace();
-			String path = workspace + "images/output/" + dir;
+			String path = "output/" + dir;
 			File actual = new File(path);
 			
 	        for(File f : actual.listFiles())
@@ -118,28 +116,29 @@ public class Main {
 		tp.lm = NeuralNetwork.LearningMethod.BATCH;
 		
 		List<String> dirs = new ArrayList<String>();
-		dirs.add("train/hand/right/fingers/0/");
-		dirs.add("train/hand/right/fingers/5/");
+		dirs.add("train/right/fingers/0/");
+		dirs.add("train/right/fingers/5/");
 		
 		PokemonTrain pt = new PokemonTrain();
 		pt.networkName = "OpenCloseRightHand";
 		pt.dirs = dirs;
 		pt.tp = tp;
 		
-		createAndTrainNetwork(pt, new int[]{ 4 });
+		int[] hiddenLayers = new int[]{ 4 };
+		
+		createAndTrainNetwork(pt, hiddenLayers);
+		
 		
 		
 		List<String> dirs1 = new ArrayList<String>();
-		dirs.add("test/hand/right/fingers/0/");
-		dirs.add("test/hand/right/fingers/5/");
+		dirs1.add("test/right/fingers/0/");
+		dirs1.add("test/right/fingers/5/");
 		
 		PokemonTest ptt = new PokemonTest();
 		ptt.networkName = "OpenCloseRightHand";
 		ptt.dirs = dirs1;
 		
-		
 		test(ptt);
-	
 	}
 
 	
@@ -166,8 +165,7 @@ public class Main {
 
 	private static void ShowOutput(NeuralNetwork nn, String dir)
 	{
-		String workspace = Util.getEclipseWorkspace();
-		String path = workspace + "images/output/" + dir;
+		String path = "output/" + dir;
 		File f = new File(path);
 		
         for(File ff : f.listFiles())
