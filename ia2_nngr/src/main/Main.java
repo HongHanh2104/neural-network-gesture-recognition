@@ -109,14 +109,61 @@ public class Main {
 	public static void main(String[] args) 
 	{	
 		//trainOpenCloseRightHand();
-		//testOpenCloseRightHand();
+		testOpenCloseRightHand();
 		
-		trainRightHandLeftHand();
+		//trainRightHandLeftHand();
 		testRightHandLeftHand();
 		
-		
+		//trainNumFingers();
+		testNumFingers();
 	}
 	
+	
+	public static void trainNumFingers()
+	{		
+		TrainingParameters tp = new TrainingParameters();
+		tp.learningRate = 0.001;
+		tp.momentum = 0.2;
+		tp.numIterations = 100000;
+		tp.errorChecks = 50;
+		tp.maxError = 0.001;
+		tp.lm = NeuralNetwork.LearningMethod.BATCH;
+		
+		List<String> dirs = new ArrayList<String>();
+		dirs.add("train/right/fingers/0/");
+		dirs.add("train/right/fingers/1/");
+		dirs.add("train/right/fingers/2/");
+		dirs.add("train/right/fingers/3/");
+		dirs.add("train/right/fingers/4/");
+		dirs.add("train/right/fingers/5/");
+		
+		GroupTrain pt = new GroupTrain();
+		pt.networkName = "NumFingers";
+		pt.dirs = dirs;
+		pt.tp = tp;
+		
+		int[] hiddenLayers = new int[]{ 4 };
+		
+		createAndTrainNetwork(pt, hiddenLayers);
+	}
+	
+	
+	public static void testNumFingers()
+	{
+		List<String> dirs = new ArrayList<String>();
+		dirs.add("test/right/fingers/0/");
+		dirs.add("test/right/fingers/1/");
+		dirs.add("test/right/fingers/2/");
+		dirs.add("test/right/fingers/3/");
+		dirs.add("test/right/fingers/4/");
+		dirs.add("test/right/fingers/5/");
+		
+		GroupTest ptt = new GroupTest();
+		ptt.networkName = "NumFingers";
+		ptt.dirs = dirs;
+		
+		testNewInstances(ptt);
+	}
 	
 	public static void trainRightHandLeftHand()
 	{		
@@ -145,13 +192,13 @@ public class Main {
 	
 	public static void testRightHandLeftHand()
 	{
-		List<String> dirs1 = new ArrayList<String>();
-		dirs1.add("test/right/fingers/5/");
-		dirs1.add("test/left/fingers/5/");
+		List<String> dirs = new ArrayList<String>();
+		dirs.add("test/right/fingers/5/");
+		dirs.add("test/left/fingers/5/");
 		
 		GroupTest ptt = new GroupTest();
 		ptt.networkName = "RightHandLeftHand";
-		ptt.dirs = dirs1;
+		ptt.dirs = dirs;
 		
 		testNewInstances(ptt);
 	}
@@ -187,13 +234,13 @@ public class Main {
 	
 	public static void testOpenCloseRightHand()
 	{
-		List<String> dirs1 = new ArrayList<String>();
-		dirs1.add("test/right/fingers/0/");
-		dirs1.add("test/right/fingers/5/");
+		List<String> dirs = new ArrayList<String>();
+		dirs.add("test/right/fingers/0/");
+		dirs.add("test/right/fingers/5/");
 		
 		GroupTest ptt = new GroupTest();
 		ptt.networkName = "OpenCloseRightHand";
-		ptt.dirs = dirs1;
+		ptt.dirs = dirs;
 		
 		testNewInstances(ptt);
 	}
