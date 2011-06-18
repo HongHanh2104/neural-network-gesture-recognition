@@ -14,6 +14,192 @@ import training.TrainingSet;
 
 public class Main {
 
+
+	
+	public static void main(String[] args) 
+	{	
+		//trainOpenCloseRightHand();
+		testOpenCloseRightHand();
+		
+		//trainRightHandLeftHand();
+		testRightHandLeftHand();
+		
+		//trainNumFingers();
+		testNumFingers();
+		
+		//trainVowels();
+		testVowels();
+	}
+	
+	
+	public static void trainVowels()
+	{		
+		TrainingParameters tp = new TrainingParameters();
+		tp.learningRate = 0.001;
+		tp.momentum = 0.3;
+		tp.numIterations = 150000;
+		tp.errorChecks = 50;
+		tp.maxError = 0.001;
+		tp.lm = NeuralNetwork.LearningMethod.BATCH;
+		
+		List<String> dirs = new ArrayList<String>();
+		dirs.add("train/right/vowels/a/");
+		dirs.add("train/right/vowels/e/");
+		dirs.add("train/right/vowels/i/");
+		dirs.add("train/right/vowels/o/");
+		dirs.add("train/right/vowels/u/");
+		
+		GroupTrain pt = new GroupTrain();
+		pt.networkName = "Vowels";
+		pt.dirs = dirs;
+		pt.tp = tp;
+		
+		int[] hiddenLayers = new int[]{ 4 };
+		
+		createAndTrainNetwork(pt, hiddenLayers);
+	}
+	
+	
+	public static void testVowels()
+	{
+		List<String> dirs = new ArrayList<String>();
+		dirs.add("test/right/vowels/a/");
+		dirs.add("test/right/vowels/e/");
+		dirs.add("test/right/vowels/i/");
+		dirs.add("test/right/vowels/o/");
+		dirs.add("test/right/vowels/u/");
+		
+		GroupTest ptt = new GroupTest();
+		ptt.networkName = "Vowels";
+		ptt.dirs = dirs;
+		
+		testNewInstances(ptt);
+	}
+	
+	
+	public static void trainNumFingers()
+	{		
+		TrainingParameters tp = new TrainingParameters();
+		tp.learningRate = 0.001;
+		tp.momentum = 0.2;
+		tp.numIterations = 100000;
+		tp.errorChecks = 50;
+		tp.maxError = 0.001;
+		tp.lm = NeuralNetwork.LearningMethod.BATCH;
+		
+		List<String> dirs = new ArrayList<String>();
+		dirs.add("train/right/fingers/0/");
+		dirs.add("train/right/fingers/1/");
+		dirs.add("train/right/fingers/2/");
+		dirs.add("train/right/fingers/3/");
+		dirs.add("train/right/fingers/4/");
+		dirs.add("train/right/fingers/5/");
+		
+		GroupTrain pt = new GroupTrain();
+		pt.networkName = "NumFingers";
+		pt.dirs = dirs;
+		pt.tp = tp;
+		
+		int[] hiddenLayers = new int[]{ 4 };
+		
+		createAndTrainNetwork(pt, hiddenLayers);
+	}
+	
+	
+	public static void testNumFingers()
+	{
+		List<String> dirs = new ArrayList<String>();
+		dirs.add("test/right/fingers/0/");
+		dirs.add("test/right/fingers/1/");
+		dirs.add("test/right/fingers/2/");
+		dirs.add("test/right/fingers/3/");
+		dirs.add("test/right/fingers/4/");
+		dirs.add("test/right/fingers/5/");
+		
+		GroupTest ptt = new GroupTest();
+		ptt.networkName = "NumFingers";
+		ptt.dirs = dirs;
+		
+		testNewInstances(ptt);
+	}
+	
+	public static void trainRightHandLeftHand()
+	{		
+		TrainingParameters tp = new TrainingParameters();
+		tp.learningRate = 0.01;
+		tp.momentum = 0.2;
+		tp.numIterations = 10000;
+		tp.errorChecks = 50;
+		tp.maxError = 0.001;
+		tp.lm = NeuralNetwork.LearningMethod.BATCH;
+		
+		List<String> dirs = new ArrayList<String>();
+		dirs.add("train/right/fingers/5/");
+		dirs.add("train/left/fingers/5/");
+		
+		GroupTrain pt = new GroupTrain();
+		pt.networkName = "RightHandLeftHand";
+		pt.dirs = dirs;
+		pt.tp = tp;
+		
+		int[] hiddenLayers = new int[]{ 4 };
+		
+		createAndTrainNetwork(pt, hiddenLayers);
+	}
+	
+	
+	public static void testRightHandLeftHand()
+	{
+		List<String> dirs = new ArrayList<String>();
+		dirs.add("test/right/fingers/5/");
+		dirs.add("test/left/fingers/5/");
+		
+		GroupTest ptt = new GroupTest();
+		ptt.networkName = "RightHandLeftHand";
+		ptt.dirs = dirs;
+		
+		testNewInstances(ptt);
+	}
+
+	
+	public static void trainOpenCloseRightHand()
+	{		
+		TrainingParameters tp = new TrainingParameters();
+		tp.learningRate = 0.01;
+		tp.momentum = 0.2;
+		tp.numIterations = 10000;
+		tp.errorChecks = 50;
+		tp.maxError = 0.001;
+		tp.lm = NeuralNetwork.LearningMethod.BATCH;
+		
+		List<String> dirs = new ArrayList<String>();
+		dirs.add("train/right/fingers/0/");
+		dirs.add("train/right/fingers/5/");
+		
+		GroupTrain pt = new GroupTrain();
+		pt.networkName = "OpenCloseRightHand";
+		pt.dirs = dirs;
+		pt.tp = tp;
+		
+		int[] hiddenLayers = new int[]{ 4 };
+		
+		createAndTrainNetwork(pt, hiddenLayers);
+	}
+	
+	public static void testOpenCloseRightHand()
+	{
+		List<String> dirs = new ArrayList<String>();
+		dirs.add("test/right/fingers/0/");
+		dirs.add("test/right/fingers/5/");
+		
+		GroupTest ptt = new GroupTest();
+		ptt.networkName = "OpenCloseRightHand";
+		ptt.dirs = dirs;
+		
+		testNewInstances(ptt);
+	}
+	
+	
 	static String trainedNetworks = "trained_networks/";
 	
 	public static TrainingSet trainingSetGenerator(List<String> dirs)
@@ -102,149 +288,11 @@ public class Main {
 		System.out.println("Testing new instances...");
 		for(String dir : dirs)
 		{
+			System.out.println(dir + " :");;
 			ShowOutput(nn, dir);
 		}
 	}
 	
-	public static void main(String[] args) 
-	{	
-		//trainOpenCloseRightHand();
-		testOpenCloseRightHand();
-		
-		//trainRightHandLeftHand();
-		testRightHandLeftHand();
-		
-		//trainNumFingers();
-		testNumFingers();
-	}
-	
-	
-	public static void trainNumFingers()
-	{		
-		TrainingParameters tp = new TrainingParameters();
-		tp.learningRate = 0.001;
-		tp.momentum = 0.2;
-		tp.numIterations = 100000;
-		tp.errorChecks = 50;
-		tp.maxError = 0.001;
-		tp.lm = NeuralNetwork.LearningMethod.BATCH;
-		
-		List<String> dirs = new ArrayList<String>();
-		dirs.add("train/right/fingers/0/");
-		dirs.add("train/right/fingers/1/");
-		dirs.add("train/right/fingers/2/");
-		dirs.add("train/right/fingers/3/");
-		dirs.add("train/right/fingers/4/");
-		dirs.add("train/right/fingers/5/");
-		
-		GroupTrain pt = new GroupTrain();
-		pt.networkName = "NumFingers";
-		pt.dirs = dirs;
-		pt.tp = tp;
-		
-		int[] hiddenLayers = new int[]{ 4 };
-		
-		createAndTrainNetwork(pt, hiddenLayers);
-	}
-	
-	
-	public static void testNumFingers()
-	{
-		List<String> dirs = new ArrayList<String>();
-		dirs.add("test/right/fingers/0/");
-		dirs.add("test/right/fingers/1/");
-		dirs.add("test/right/fingers/2/");
-		dirs.add("test/right/fingers/3/");
-		dirs.add("test/right/fingers/4/");
-		dirs.add("test/right/fingers/5/");
-		
-		GroupTest ptt = new GroupTest();
-		ptt.networkName = "NumFingers";
-		ptt.dirs = dirs;
-		
-		testNewInstances(ptt);
-	}
-	
-	public static void trainRightHandLeftHand()
-	{		
-		TrainingParameters tp = new TrainingParameters();
-		tp.learningRate = 0.01;
-		tp.momentum = 0.2;
-		tp.numIterations = 10000;
-		tp.errorChecks = 50;
-		tp.maxError = 0.001;
-		tp.lm = NeuralNetwork.LearningMethod.BATCH;
-		
-		List<String> dirs = new ArrayList<String>();
-		dirs.add("train/right/fingers/5/");
-		dirs.add("train/left/fingers/5/");
-		
-		GroupTrain pt = new GroupTrain();
-		pt.networkName = "RightHandLeftHand";
-		pt.dirs = dirs;
-		pt.tp = tp;
-		
-		int[] hiddenLayers = new int[]{ 4 };
-		
-		createAndTrainNetwork(pt, hiddenLayers);
-	}
-	
-	
-	public static void testRightHandLeftHand()
-	{
-		List<String> dirs = new ArrayList<String>();
-		dirs.add("test/right/fingers/5/");
-		dirs.add("test/left/fingers/5/");
-		
-		GroupTest ptt = new GroupTest();
-		ptt.networkName = "RightHandLeftHand";
-		ptt.dirs = dirs;
-		
-		testNewInstances(ptt);
-	}
-	
-	
-	
-	
-	public static void trainOpenCloseRightHand()
-	{		
-		TrainingParameters tp = new TrainingParameters();
-		tp.learningRate = 0.01;
-		tp.momentum = 0.2;
-		tp.numIterations = 10000;
-		tp.errorChecks = 50;
-		tp.maxError = 0.001;
-		tp.lm = NeuralNetwork.LearningMethod.BATCH;
-		
-		List<String> dirs = new ArrayList<String>();
-		dirs.add("train/right/fingers/0/");
-		dirs.add("train/right/fingers/5/");
-		
-		GroupTrain pt = new GroupTrain();
-		pt.networkName = "OpenCloseRightHand";
-		pt.dirs = dirs;
-		pt.tp = tp;
-		
-		int[] hiddenLayers = new int[]{ 4 };
-		
-		createAndTrainNetwork(pt, hiddenLayers);
-	}
-	
-	
-	
-	public static void testOpenCloseRightHand()
-	{
-		List<String> dirs = new ArrayList<String>();
-		dirs.add("test/right/fingers/0/");
-		dirs.add("test/right/fingers/5/");
-		
-		GroupTest ptt = new GroupTest();
-		ptt.networkName = "OpenCloseRightHand";
-		ptt.dirs = dirs;
-		
-		testNewInstances(ptt);
-	}
-
 	
 	private static void trainNeuralNetwork(NeuralNetwork nn, TrainingSet ts, TrainingParameters tp, boolean verbose)
 	{
