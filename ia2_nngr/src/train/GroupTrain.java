@@ -2,7 +2,7 @@ package train;
 
 import java.util.List;
 
-public class PokemonTrain
+public class GroupTrain
 {
 	public String networkName;
 	public List<String> dirs;

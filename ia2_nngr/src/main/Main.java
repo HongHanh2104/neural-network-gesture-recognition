@@ -7,13 +7,15 @@ import java.util.List;
 
 import neural_network.NeuralNetwork;
 import train.ImageTrainingInstance;
-import train.PokemonTest;
-import train.PokemonTrain;
+import train.GroupTest;
+import train.GroupTrain;
 import train.TrainingParameters;
 import training.TrainingSet;
 
 public class Main {
 
+	static String trainedNetworks = "trained_networks/";
+	
 	public static TrainingSet trainingSetGenerator(List<String> dirs)
 	{
 		TrainingSet ts = null;
@@ -56,7 +58,7 @@ public class Main {
 	}
 	
 	
-	public static void createAndTrainNetwork(PokemonTrain p, int[] numHiddenNeurons)
+	public static void createAndTrainNetwork(GroupTrain p, int[] numHiddenNeurons)
 	{
 		List<String> dirs = p.dirs;
 		String networkName = p.networkName;
@@ -73,26 +75,26 @@ public class Main {
 		System.out.println("Training network...");
 		trainNeuralNetwork(nn, ts, tp, true);
 		
-        System.out.println("Serializing neural network...");
+        //System.out.println("Serializing neural network...");
 		try
 		{
-			File file = new File(networkName + ".nn");
+			File file = new File(trainedNetworks + networkName + ".nn");
 			nn.serialize(file);
 		}
 		catch(Exception e){ e.printStackTrace(); }
 	}
 	
-	public static void test(PokemonTest p)
+	public static void testNewInstances(GroupTest p)
 	{
 		String networkName = p.networkName;
 		List<String> dirs = p.dirs;
 		
 		NeuralNetwork nn = null;
 		
-		System.out.println("Unserializing...");
+		//System.out.println("Unserializing...");
 		try
 		{
-			File file = new File(networkName + ".nn");
+			File file = new File(trainedNetworks + networkName + ".nn");
 			nn = NeuralNetwork.unserialize(file);
 		}
 		catch(Exception e){ e.printStackTrace(); }
@@ -104,8 +106,60 @@ public class Main {
 		}
 	}
 	
-	
 	public static void main(String[] args) 
+	{	
+		//trainOpenCloseRightHand();
+		//testOpenCloseRightHand();
+		
+		trainRightHandLeftHand();
+		testRightHandLeftHand();
+		
+		
+	}
+	
+	
+	public static void trainRightHandLeftHand()
+	{		
+		TrainingParameters tp = new TrainingParameters();
+		tp.learningRate = 0.01;
+		tp.momentum = 0.2;
+		tp.numIterations = 10000;
+		tp.errorChecks = 50;
+		tp.maxError = 0.001;
+		tp.lm = NeuralNetwork.LearningMethod.BATCH;
+		
+		List<String> dirs = new ArrayList<String>();
+		dirs.add("train/right/fingers/5/");
+		dirs.add("train/left/fingers/5/");
+		
+		GroupTrain pt = new GroupTrain();
+		pt.networkName = "RightHandLeftHand";
+		pt.dirs = dirs;
+		pt.tp = tp;
+		
+		int[] hiddenLayers = new int[]{ 4 };
+		
+		createAndTrainNetwork(pt, hiddenLayers);
+	}
+	
+	
+	public static void testRightHandLeftHand()
+	{
+		List<String> dirs1 = new ArrayList<String>();
+		dirs1.add("test/right/fingers/5/");
+		dirs1.add("test/left/fingers/5/");
+		
+		GroupTest ptt = new GroupTest();
+		ptt.networkName = "RightHandLeftHand";
+		ptt.dirs = dirs1;
+		
+		testNewInstances(ptt);
+	}
+	
+	
+	
+	
+	public static void trainOpenCloseRightHand()
 	{		
 		TrainingParameters tp = new TrainingParameters();
 		tp.learningRate = 0.01;
@@ -119,7 +173,7 @@ public class Main {
 		dirs.add("train/right/fingers/0/");
 		dirs.add("train/right/fingers/5/");
 		
-		PokemonTrain pt = new PokemonTrain();
+		GroupTrain pt = new GroupTrain();
 		pt.networkName = "OpenCloseRightHand";
 		pt.dirs = dirs;
 		pt.tp = tp;
@@ -127,18 +181,21 @@ public class Main {
 		int[] hiddenLayers = new int[]{ 4 };
 		
 		createAndTrainNetwork(pt, hiddenLayers);
-		
-		
-		
+	}
+	
+	
+	
+	public static void testOpenCloseRightHand()
+	{
 		List<String> dirs1 = new ArrayList<String>();
 		dirs1.add("test/right/fingers/0/");
 		dirs1.add("test/right/fingers/5/");
 		
-		PokemonTest ptt = new PokemonTest();
+		GroupTest ptt = new GroupTest();
 		ptt.networkName = "OpenCloseRightHand";
 		ptt.dirs = dirs1;
 		
-		test(ptt);
+		testNewInstances(ptt);
 	}
 
 	
