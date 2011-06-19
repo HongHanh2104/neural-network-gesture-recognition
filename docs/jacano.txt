@@ -1,0 +1,27 @@
+-Proceso de obtención del conjunto de entrenamiento
+
+Ninguno
+
+-Distintas posibilidades intentadas, en cuanto a estructura de la red (número de capas ocultas, número de unidades en cada capa, etc.)
+
+Pruebas con 1, 2 y 3 capas ocultas
+Neuronas en cada capa oculta: 10, 100, 1000, 5000
+
+
+-Resultados según los distintos algoritmos de entrenamiento (regla delta, retropropagación, momentum) 
+
+Modo incremental, batch y momentum.
+
+gráfica de barras con distintos modos frente a error con número fijo de iteraciones.
+
+gráficas velocidad de convergencia variando parámetros:
+
+factor de aprendizaje vs iteraciones
+número de iteraciones vs error (fijo factor de aprendizaje) 4 ejemplos...
+
+
+-Generación de los pesos iniciales, distintos criterios de parada 
+
+Aleatorios.
+
+Por número de iteraciones y por cota en error cuadrático medio.
