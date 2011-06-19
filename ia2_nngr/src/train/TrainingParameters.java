@@ -10,6 +10,6 @@ public class TrainingParameters {
 	public int numIterations = 10000;
 	public int errorChecks = 50;
 	public double maxError = 0.001;
-	public LearningMethod lm = NeuralNetwork.LearningMethod.BATCH;
+	public LearningMethod learningMethod = NeuralNetwork.LearningMethod.BATCH;
 	
 }
