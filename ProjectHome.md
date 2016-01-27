@@ -1,0 +1,1 @@
+The objective of this project is the recognition of gestures using neural networks.
